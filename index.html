@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Live Exchange</title>
+</head>
+<body>
+  <div id="converter-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+    <h2>Currency Converter</h2>
+    <!-- <input type="number" id="amount" placeholder="Amount" /> -->
+
+    <div style="margin: 10px 0;">
+      <input type="number" id="amountInput" placeholder="Amount"><br><br>
+<select id="fromCurrency"></select>  ->
+<select id="toCurrency"></select>
+<button id="convertBtn">Convert</button>
+<p id="result"></p>
+    </div>
+
+    <!-- <button onclick="convert()">Convert</button> -->
+    <p id="result"></p>
+  </div>
+</div>
+    <header class="header">
+    <div class="logo">
+      <img src="" alt="Logo" class="logo-icon">
+      <span>Currency Exchange</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#">Rates</a>
+      <a class="a1" href="#">Converter</a>
+    </nav>
+  </header>
+    <div class="container">
+    <h1>Live Exchange Rates</h1>
+    <p>Real-time data for all major global currencies, based on the US Dollar.</p>
+    <input type="text" placeholder="Filter currencies…" class="search-box">
+    </div>
+  <section class="table-section">
+  <table id="currency-table">
+    <thead>
+      <tr>
+        <th>CURRENCY</th>
+        <th>CODE</th>
+        <th>RATE</th>
+        <th>CHANGE (24h)</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</section>
+
+
+    <script src="main.js"></script>
+</body>
+</html>

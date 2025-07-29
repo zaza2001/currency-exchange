@@ -1,0 +1,207 @@
+function getTodayDate() {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+const todayDate = getTodayDate();
+const currencyToCountry = {
+  AED: 'ae',
+  AMD: 'am',
+  AUD: 'au',
+  AZN: 'az',
+  BGN: 'bg',
+  USD: 'us',
+  EUR: 'eu',
+  GEL: 'ge',
+  ZAR: 'za',
+  UZS: 'uz',
+  UAH: 'ua',
+  TRY: 'tr',
+  RSD: 'rs',
+  RUB: 'ru',
+  SEK: 'se',
+  SGD: 'sg',
+  TJS: 'tj',
+  TMT: 'tm',
+  ISK: 'is',
+  JPY: 'jp',
+  KGS: 'kg',
+  KRW: 'kr',
+  KWD: 'kw',
+  KZT: 'kz',
+  MDL: 'md',
+  NOK: 'no',
+  NZD: 'nz',
+  PLN: 'pl',
+  QAR: 'qa',
+  RON: 'ro',
+  GBP: 'gb',
+  HKD: 'hk',
+  HUF: 'hu',
+  ILS: 'il',
+  INR: 'ir',
+  IRR: 'ir',
+  BRL: 'br',
+  BYN: 'by',
+  CAD: 'ca',
+  CHF: 'ch',
+  CNY: 'cn',
+  CZK: 'cz',
+  DKK: 'dk',
+  EGP: 'eg',
+  
+};
+
+fetch(`https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/ka/json/?date=${todayDate}`)
+  .then(response => response.json())
+  .then(data => {
+    const tableBody = document.querySelector('#currency-table tbody');
+    tableBody.innerHTML = ''; 
+
+    data[0].currencies.forEach(currency => {
+      const row = `
+        <tr>
+          <td>${currency.code}</td>
+           <td>
+  <img src="https://flagcdn.com/24x18/${currencyToCountry[currency.code]?.toLowerCase() || 'un'}.png" alt="flag" style="vertical-align: middle; margin-right: 8px;">
+  ${currency.name}
+</td>
+
+          <td>${currency.rate}</td>
+          <td>${currency.diff > 0 ? '+' : ''}${currency.diff}</td>
+
+        </tr>
+      `;
+      tableBody.insertAdjacentHTML('beforeend', row);
+    });
+  })
+  .catch(error => {
+    console.error('მონაცემების მიღების შეცდომა:', error);
+  });
+const modal = document.getElementById('converter-modal');
+const openBtn = document.querySelector('.a1');
+const closeBtn = document.querySelector('.close-button');
+
+openBtn.addEventListener('click', () => {
+  modal.style.display = 'flex';
+});
+
+
+closeBtn.addEventListener('click', () => {
+  modal.style.display = 'none';
+});
+
+window.addEventListener('click', (e) => {
+  if (e.target === modal) {
+    modal.style.display = 'none';
+  }
+});
+
+// function convert() {
+//   const amount = parseFloat(document.getElementById('amount').value);
+//   const from = document.getElementById('fromCurrency').value;
+//   const to = document.getElementById('toCurrency').value;
+//   const resultElement = document.getElementById('result');
+
+//   if (isNaN(amount)) {
+//     resultElement.innerText = 'Enter a valid number';
+//     return;
+//   }
+
+//   const rates = {
+//     USD: 1,
+//     EUR: 0.91,
+//     GEL: 2.75,
+//     AED:1
+//   };
+
+//   if (!rates[from] || !rates[to]) {
+//     resultElement.innerText = 'Currency not supported';
+//     return;
+//   }
+
+//   const converted = (amount / rates[from]) * rates[to];
+//   resultElement.innerText = `${amount} ${from} = ${converted.toFixed(2)} ${to}`;
+// }
+let liveRates = {}; 
+fetch(`https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/ka/json/?date=${todayDate}`)
+  .then(response => response.json())
+  .then(data => {
+    const tableBody = document.querySelector('#currency-table tbody');
+    tableBody.innerHTML = '';
+
+    data[0].currencies.forEach(currency => {
+      liveRates[currency.code] = currency.rate; 
+      const row = `
+        <tr>
+          <td>${currency.code}</td>
+          <td>${currency.name}</td>
+          <td>${currency.rate}</td>
+          <td>${currency.diff > 0 ? '+' : ''}${currency.diff}</td>
+        </tr>
+      `;
+      tableBody.insertAdjacentHTML('beforeend', row);
+    });
+
+    populateCurrencySelects();
+  })
+  .catch(error => {
+    console.error('მონაცემების მიღების შეცდომა:', error);
+  });
+function populateCurrencySelects() {
+  const fromSelect = document.getElementById('fromCurrency');
+  const toSelect = document.getElementById('toCurrency');
+
+  fromSelect.innerHTML = '';
+  toSelect.innerHTML = '';
+
+  for (const code in liveRates) {
+    const optionFrom = document.createElement('option');
+    optionFrom.value = code;
+    optionFrom.textContent = code;
+
+    const optionTo = document.createElement('option');
+    optionTo.value = code;
+    optionTo.textContent = code;
+
+    fromSelect.appendChild(optionFrom);
+    toSelect.appendChild(optionTo);
+  }
+
+  fromSelect.value = 'USD'; 
+  toSelect.value = 'EUR';
+}
+document.getElementById('convertBtn').addEventListener('click', () => {
+  const amount = parseFloat(document.getElementById('amountInput').value);
+  const from = document.getElementById('fromCurrency').value;
+  const to = document.getElementById('toCurrency').value;
+
+  if (!amount || isNaN(amount)) {
+    alert('გთხოვთ, შეიყვანეთ თანხა.');
+    return;
+  }
+
+  const rateFrom = liveRates[from];
+  const rateTo = liveRates[to];
+
+  if (rateFrom && rateTo) {
+    const result = (amount / rateFrom) * rateTo;
+    document.getElementById('result').textContent = `${amount} ${from} = ${result.toFixed(4)} ${to}`;
+  } else {
+    alert('ვალუტის კურსი ვერ მოიძებნა.');
+  }
+});
+const searchInput = document.querySelector('.search-box');
+
+searchInput.addEventListener('keyup', () => {
+  const filter = searchInput.value.toLowerCase();
+  const rows = document.querySelectorAll('#currency-table tbody tr');
+
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(filter) ? '' : 'none';
+  });
+});

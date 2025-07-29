@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <title>ვალუტის კონვერტორი</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    label, select, input, button {
+      display: block;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>ვალუტის კონვერტაცია</h2>
+
+  <label>თანხა:</label>
+  <input type="number" id="amount" value="1" />
+
+  <label>საიდან:</label>
+  <select id="from-currency"></select>
+
+  <label>სად:</label>
+  <select id="to-currency"></select>
+
+  <button onclick="handleConvert()">გადაყვანა</button>
+
+  <h3>შედეგი: <span id="result">-</span></h3>
+
+  <script>
+    let rates = {};
+
+    // ჩატვირთე კურსები API-დან
+    fetch('https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/ka/json/')
+      .then(response => response.json())
+      .then(data => {
+        const currencyList = data[0].currencies;
+        const fromSelect = document.getElementById('from-currency');
+        const toSelect = document.getElementById('to-currency');
+
+        // დაამატე ყველა ვალუტა სელექტებში და rates-ში
+        currencyList.forEach(currency => {
+          rates[currency.code] = currency.rate;
+
+          const option1 = document.createElement('option');
+          option1.value = currency.code;
+          option1.textContent = currency.code;
+          fromSelect.appendChild(option1);
+
+          const option2 = document.createElement('option');
+          option2.value = currency.code;
+          option2.textContent = currency.code;
+          toSelect.appendChild(option2);
+        });
+
+        // აირჩიე ნაგულისხმევად USD და GEL
+        fromSelect.value = "USD";
+        toSelect.value = "GEL";
+
+      })
+      .catch(err => {
+        console.error("შეცდომა კურსების ჩატვირთვისას:", err);
+      });
+
+    // კონვერტაციის ფუნქცია
+    function handleConvert() {
+      const amount = parseFloat(document.getElementById('amount').value);
+      const from = document.getElementById('from-currency').value;
+      const to = document.getElementById('to-currency').value;
+
+      if (!rates[from] || !rates[to]) {
+        document.getElementById('result').textContent = "კურსი ვერ მოიძებნა";
+        return;
+      }
+
+      const amountInGel = amount * rates[from]; // ლარში
+      const converted = amountInGel / rates[to]; // საბოლოო
+
+      document.getElementById('result').textContent = `${converted.toFixed(2)} ${to}`;
+    }
+  </script>
+</body>
+</html>
