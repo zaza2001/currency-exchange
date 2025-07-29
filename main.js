@@ -7,80 +7,54 @@ function getTodayDate() {
 }
 
 const todayDate = getTodayDate();
-const currencyToCountry = {
-  AED: 'ae',
-  AMD: 'am',
-  AUD: 'au',
-  AZN: 'az',
-  BGN: 'bg',
-  USD: 'us',
-  EUR: 'eu',
-  GEL: 'ge',
-  ZAR: 'za',
-  UZS: 'uz',
-  UAH: 'ua',
-  TRY: 'tr',
-  RSD: 'rs',
-  RUB: 'ru',
-  SEK: 'se',
-  SGD: 'sg',
-  TJS: 'tj',
-  TMT: 'tm',
-  ISK: 'is',
-  JPY: 'jp',
-  KGS: 'kg',
-  KRW: 'kr',
-  KWD: 'kw',
-  KZT: 'kz',
-  MDL: 'md',
-  NOK: 'no',
-  NZD: 'nz',
-  PLN: 'pl',
-  QAR: 'qa',
-  RON: 'ro',
-  GBP: 'gb',
-  HKD: 'hk',
-  HUF: 'hu',
-  ILS: 'il',
-  INR: 'ir',
-  IRR: 'ir',
-  BRL: 'br',
-  BYN: 'by',
-  CAD: 'ca',
-  CHF: 'ch',
-  CNY: 'cn',
-  CZK: 'cz',
-  DKK: 'dk',
-  EGP: 'eg',
+const currencyToCountry = new Map([
+  ["AED",'ae'],
+  ["AMD", 'am'],
+  ["AUD", 'au'],
+  ["AZN", 'az'],
+  ["BGN", 'bg'],
+  ["USD", 'us'],
+ [" EUR", 'eu'],
+ [" GEL", 'ge'],
+ [" ZAR", 'za'],
+ [" UZS", 'uz'],
+ [" UAH", 'ua'],
+ [" TRY", 'tr'],
+ [" RSD", 'rs'],
+ [" RUB", 'ru'],
+ [ "SEK", 'se'],
+ [ "SGD", 'sg'],
+ [ "TJS", 'tj'],
+ [ "TMT", 'tm'],
+ [ "ISK", 'is'],
+ [ "JPY", 'jp'],
+ [ "KGS", 'kg'],
+  ["KRW", 'kr'],
+ [" KWD", 'kw'],
+ [ "KZT", 'kz'],
+ [ "MDL", 'md'],
+ [ "NOK", 'no'],
+ [ "NZD", 'nz'],
+ [" PLN", 'pl'],
+ [" QAR", 'qa'],
+ [" RON", 'ro'],
+ [" GBP", 'gb'],
+ [" HKD", 'hk'],
+ [" HUF", 'hu'],
+ [ "ILS", 'il'],
+ [" INR", 'ir'],
+ [" IRR", 'ir'],
+ [ "BRL", 'br'],
+ [" BYN", 'by'],
+ [" CAD", 'ca'],
+ [" CHF", 'ch'],
+ [" CNY", 'cn'],
+ [" CZK", 'cz'],
+ [" DKK", 'dk'],
+ [" EGP", 'eg']
   
-};
+]);
 
-fetch(`https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/ka/json/?date=${todayDate}`)
-  .then(response => response.json())
-  .then(data => {
-    const tableBody = document.querySelector('#currency-table tbody');
-    tableBody.innerHTML = ''; 
-
-    data[0].currencies.forEach(currency => {
-      const row = `
-        <tr>
-          <td>${currency.code}</td>
-           <td>
-  <img src="https://flagcdn.com/24x18/${currencyToCountry[currency.code]?.toLowerCase() || 'un'}.png" alt="flag" style="vertical-align: middle; margin-right: 8px;">
-  ${currency.name}
-</td>
-
-          <td>${currency.rate}</td>
-          <td>${currency.diff > 0 ? '+' : ''}${currency.diff}</td>
-
-        </tr>
-      `;
-      tableBody.insertAdjacentHTML('beforeend', row);
-    });
-  })
-  .catch(error => {
-    console.error('მონაცემების მიღების შეცდომა:', error);
-  });
 const modal = document.getElementById('converter-modal');
 const openBtn = document.querySelector('.a1');
 const closeBtn = document.querySelector('.close-button');
@@ -132,15 +106,17 @@ fetch(`https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/ka/json/?date=${to
   .then(data => {
     const tableBody = document.querySelector('#currency-table tbody');
     tableBody.innerHTML = '';
+    // console.log(currencyToCountry[currency.code]);
 
     data[0].currencies.forEach(currency => {
       liveRates[currency.code] = currency.rate; 
       const row = `
         <tr>
-          <td>${currency.code}</td>
+          <td>${currency.code}<img src="https://flagsapi.com/${currencyToCountry.get(currency.code).toUpperCase()}/flat/64.png"></td>
           <td>${currency.name}</td>
           <td>${currency.rate}</td>
           <td>${currency.diff > 0 ? '+' : ''}${currency.diff}</td>
+          
         </tr>
       `;
       tableBody.insertAdjacentHTML('beforeend', row);
