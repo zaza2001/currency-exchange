@@ -74,45 +74,23 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// function convert() {
-//   const amount = parseFloat(document.getElementById('amount').value);
-//   const from = document.getElementById('fromCurrency').value;
-//   const to = document.getElementById('toCurrency').value;
-//   const resultElement = document.getElementById('result');
-
-//   if (isNaN(amount)) {
-//     resultElement.innerText = 'Enter a valid number';
-//     return;
-//   }
-
-//   const rates = {
-//     USD: 1,
-//     EUR: 0.91,
-//     GEL: 2.75,
-//     AED:1
-//   };
-
-//   if (!rates[from] || !rates[to]) {
-//     resultElement.innerText = 'Currency not supported';
-//     return;
-//   }
-
-//   const converted = (amount / rates[from]) * rates[to];
-//   resultElement.innerText = `${amount} ${from} = ${converted.toFixed(2)} ${to}`;
-// }
 let liveRates = {}; 
 fetch(`https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/ka/json/?date=${todayDate}`)
   .then(response => response.json())
   .then(data => {
     const tableBody = document.querySelector('#currency-table tbody');
     tableBody.innerHTML = '';
-    // console.log(currencyToCountry[currency.code]);
+
 
     data[0].currencies.forEach(currency => {
       liveRates[currency.code] = currency.rate; 
+const countryCode = currencyToCountry.get(currency.code);
+const flagUrl = countryCode
+  ? `https://flagsapi.com/${countryCode.toUpperCase()}/flat/64.png` 
+  : '';     
       const row = `
         <tr>
-          <td>${currency.code}<img src="https://flagsapi.com/${currencyToCountry.get(currency.code).toUpperCase()}/flat/64.png"></td>
+<td>${currency.code} ${flagUrl ? `<img src="${flagUrl}" width="40px" style="display:flex;">` : ''}</td>
           <td>${currency.name}</td>
           <td>${currency.rate}</td>
           <td>${currency.diff > 0 ? '+' : ''}${currency.diff}</td>
