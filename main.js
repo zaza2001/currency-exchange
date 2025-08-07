@@ -42,7 +42,7 @@ const currencyToCountry = new Map([
  ["HKD", 'hk'],
  ["HUF", 'hu'],
  ["ILS", 'il'],
- ["INR", 'ir'],
+ ["INR", 'in'],
  ["IRR", 'ir'],
  ["BRL", 'br'],
  ["BYN", 'by'],
@@ -52,7 +52,8 @@ const currencyToCountry = new Map([
  ["CZK", 'cz'],
  ["DKK", 'dk'],
  ["EGP", 'eg'],
- ["USD",'us']
+ ["USD",'us'],
+ ["EUR",'eu']
   
 ]);
 
@@ -84,10 +85,11 @@ fetch(`https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/ka/json/?date=${to
 
 
     data[0].currencies.forEach(currency => {
+      liveRates['GEL'] = 1;
       liveRates[currency.code] = currency.rate; 
 const countryCode = currencyToCountry.get(currency.code);
 const flagUrl = countryCode
-  ? `https://flagsapi.com/${countryCode.toUpperCase()}/flat/64.png` 
+  ? `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png` 
   : '';     
       const row = `
         <tr>
