@@ -104,6 +104,66 @@ const flagUrl = countryCode
     });
 
     populateCurrencySelects();
+    function populateCurrencySelects() {
+  const fromSelect = document.getElementById('fromCurrency');
+  const toSelect = document.getElementById('toCurrency');
+
+  fromSelect.innerHTML = '';
+  toSelect.innerHTML = '';
+
+  for (const code in liveRates) {
+    const optionFrom = document.createElement('option');
+    optionFrom.value = code;
+    optionFrom.textContent = code;
+
+    const optionTo = document.createElement('option');
+    optionTo.value = code;
+    optionTo.textContent = code;
+
+    fromSelect.appendChild(optionFrom);
+    toSelect.appendChild(optionTo);
+  }
+
+  fromSelect.value = 'USD';
+  toSelect.value = 'EUR';
+
+  updateCurrencySelects();
+}
+
+function updateCurrencySelects() {
+  const fromSelect = document.getElementById('fromCurrency');
+  const toSelect = document.getElementById('toCurrency');
+
+  const fromVal = fromSelect.value;
+  const toVal = toSelect.value;
+
+  // Enable all options first
+  for (let option of fromSelect.options) option.disabled = false;
+  for (let option of toSelect.options) option.disabled = false;
+
+  // Disable in fromSelect the option selected in toSelect
+  if (toVal) {
+    for (let option of fromSelect.options) {
+      if (option.value === toVal) {
+        option.disabled = true;
+      }
+    }
+  }
+
+  // Disable in toSelect the option selected in fromSelect
+  if (fromVal) {
+    for (let option of toSelect.options) {
+      if (option.value === fromVal) {
+        option.disabled = true;
+      }
+    }
+  }
+}
+
+// Add event listeners for mutual exclusion
+document.getElementById('fromCurrency').addEventListener('change', updateCurrencySelects);
+document.getElementById('toCurrency').addEventListener('change', updateCurrencySelects);
+
   })
   .catch(error => {
     console.error('მონაცემების მიღების შეცდომა:', error);
@@ -131,6 +191,7 @@ function populateCurrencySelects() {
   fromSelect.value = 'USD'; 
   toSelect.value = 'EUR';
 }
+
 document.getElementById('convertBtn').addEventListener('click', () => {
   const amount = parseFloat(document.getElementById('amountInput').value);
   const from = document.getElementById('fromCurrency').value;
