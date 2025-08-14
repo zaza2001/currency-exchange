@@ -177,4 +177,15 @@ th {
       cursor: pointer;
       border-radius: 5px;
     }
+    #swapBtn{
+      height: 30px;
+      width: 40px;
+      margin-right: 80px;
+    }
+    #toCurrency{
+      background-color: rgb(255, 255, 255);
+    } 
+    #fromCurrency{
+      background-color: rgb(255, 255, 255);
+    }
     

@@ -249,3 +249,18 @@ searchInput.addEventListener('keyup', () => {
     row.style.display = text.includes(filter) ? '' : 'none';
   });
 });
+document.getElementById('swapBtn').addEventListener('click', () => {
+  const fromSelect = document.getElementById('fromCurrency');
+  const toSelect = document.getElementById('toCurrency');
+
+  const temp = fromSelect.value;
+  fromSelect.value = toSelect.value;
+  toSelect.value = temp;
+
+  const event = new Event('change');
+  fromSelect.dispatchEvent(event);
+  toSelect.dispatchEvent(event);
+
+  document.getElementById('convertBtn').click();
+});
+
