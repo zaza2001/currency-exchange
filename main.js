@@ -124,8 +124,9 @@ const flagUrl = countryCode
     toSelect.appendChild(optionTo);
   }
 
-  fromSelect.value = 'USD';
   toSelect.value = 'EUR';
+  fromSelect.value = 'USD';
+  
 
   updateCurrencySelects();
 }
@@ -164,6 +165,30 @@ function updateCurrencySelects() {
 document.getElementById('fromCurrency').addEventListener('change', updateCurrencySelects);
 document.getElementById('toCurrency').addEventListener('change', updateCurrencySelects);
 
+const fromVal = fromSelect.value;
+  const toVal = toSelect.value;
+
+  // Enable all options first
+  for (let option of fromSelect.options) option.disabled = false;
+  for (let option of toSelect.options) option.disabled = false;
+
+  // Disable in fromSelect the option selected in toSelect
+  if (toVal) {
+    for (let option of fromSelect.options) {
+      if (option.value === toVal) {
+        option.disabled = true;
+      }
+    }
+  }
+
+  // Disable in toSelect the option selected in fromSelect
+  if (fromVal) {
+    for (let option of toSelect.options) {
+      if (option.value === fromVal) {
+        option.disabled = true;
+      }
+    }
+  }
   })
   .catch(error => {
     console.error('მონაცემების მიღების შეცდომა:', error);
@@ -188,22 +213,23 @@ function populateCurrencySelects() {
     toSelect.appendChild(optionTo);
   }
 
-  fromSelect.value = 'USD'; 
   toSelect.value = 'EUR';
+  fromSelect.value = 'USD'; 
+  
 }
 
 document.getElementById('convertBtn').addEventListener('click', () => {
   const amount = parseFloat(document.getElementById('amountInput').value);
-  const from = document.getElementById('fromCurrency').value;
-  const to = document.getElementById('toCurrency').value;
+  const from = document.getElementById('toCurrency').value;
+  const to = document.getElementById('fromCurrency').value;
 
   if (!amount || isNaN(amount)) {
     alert('გთხოვთ, შეიყვანეთ თანხა.');
     return;
   }
 
-  const rateFrom = liveRates[from];
-  const rateTo = liveRates[to];
+  const rateFrom = liveRates[to];
+  const rateTo = liveRates[from];
 
   if (rateFrom && rateTo) {
     const result = (amount / rateFrom) * rateTo;
